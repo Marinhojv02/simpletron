@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+#define TAM 5
+// Definição dos comandos
+// ----------------------------------------------------------------------------
+#define READ 10
+#define WRITE 11
+// ----------------------------------------------------------------------------
+#define LOAD 20
+#define STORE 21
+// ----------------------------------------------------------------------------
+#define ADD 30
+#define SUBTRACT 31
+#define DIVIDE 32
+#define MULTIPLY 33
+// ----------------------------------------------------------------------------
+#define BRANCH 40
+#define BRANCHNEG 41
+#define BRANCHZERO 42
+#define HALT 43
+// ----------------------------------------------------------------------------
+
+int main(){
+    char sinal[TAM];
+    int acumulador;
+    int comandos[TAM];
+    int i;
+
+    for(i=0; i<5;i++){
+        fflush(stdin);
+        scanf("%c%5d\n", &sinal[i], &comandos[i]);
+        printf("imprimir o comando: %c%d\n", sinal[i], comandos[i]);
+        printf("i: %d\n", i);
+        if(sinal[i] == '-' && comandos[i]== 99999){
+            break;
+        }
+    }
+    /*do{
+        fflush(stdin);
+        scanf("%c%d", &sinal[i], &comandos[i]);
+        i++;
+        
+    } while (comandos[i] != '-99999' || i < 100);
+    */
+    for (acumulador = 0; acumulador < i; acumulador++){
+        printf("%02d \? %c%d\n", acumulador, sinal[acumulador], comandos[acumulador]);
+    }
+    return 0;
+}
