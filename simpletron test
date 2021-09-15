@@ -19,21 +19,31 @@
 #define BRANCHZERO 42
 #define HALT 43
 // ----------------------------------------------------------------------------
-
+int verificar_comando(char str, int num);
 int main(){
     char sinal[TAM];
     int acumulador;
     int comandos[TAM];
     int i;
+    int verifica;
 
     for(i=0; i<5;i++){
         fflush(stdin);
         scanf("%c%5d\n", &sinal[i], &comandos[i]);
         printf("imprimir o comando: %c%d\n", sinal[i], comandos[i]);
         printf("i: %d\n", i);
-        if(sinal[i] == '-' && comandos[i]== 99999){
+        verifica = verificar_comando(sinal[i], comandos[i]);
+        if(verifica==1){
+            printf("acabaram os comandos\n");
             break;
         }
+        else if(verifica == 0){
+            printf("entra aqui\n");
+        }
+        else{
+            printf("não entra\n");
+        }
+        
     }
     /*do{
         fflush(stdin);
@@ -46,4 +56,18 @@ int main(){
         printf("%02d \? %c%d\n", acumulador, sinal[acumulador], comandos[acumulador]);
     }
     return 0;
+}
+int verificar_comando(char str, int num){
+    
+    if (str == '+'){
+        return 0;
+    }else if (str == '-'){
+        if ( num == 99999){
+            return 1;
+        }else{
+            return 2;
+        }
+    }else{
+        return 2;
+    }
 }
