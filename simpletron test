@@ -102,7 +102,9 @@ int main(){
                         scanf("%d", &num[cont]);
                         media+=num[cont];
                     }
-                    printf("media = %d\n", media/7);
+                    media=media/7;
+                    printf("media = %d\n", media);
+                    resultados[operando]= media;
                     break;
                 case HALT:
                     break;
