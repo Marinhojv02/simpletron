@@ -1,0 +1,21 @@
+00      le variavel A: qtd de numeros
+01      carrega variavel B: primeiro numero
+02      le variavel B: primeiro numero
+03      carrega variavel C: segundo numero
+04      le variavel C: segundo numero
+05      faz a conta (C-B)
+06      negativo: volta para memoria 04 e pede um novo numero
+07      positivo: armazena C no lugar da variavel B
+08      retorna para memoria 04 e pede um novo numero
+09     
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
