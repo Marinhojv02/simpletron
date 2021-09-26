@@ -1,137 +1,199 @@
 #include <stdio.h>
+#include <string.h>
 #include <locale.h>
 
-#define TAM 5
-// Definição dos comandos
-// ----------------------------------------------------------------------------
-#define READ 10
-#define WRITE 11
-#define MEDIA 13
-// ----------------------------------------------------------------------------
-#define LOAD 20
-#define STORE 21
-// ----------------------------------------------------------------------------
-#define ADD 30
-#define SUBTRACT 31
-#define DIVIDE 32
-#define MULTIPLY 33
-// ----------------------------------------------------------------------------
-#define BRANCH 40
-#define BRANCHNEG 41
-#define BRANCHZERO 42
-#define HALT 43
-// ----------------------------------------------------------------------------
-int verificar_comando(char str, int num);
-int main(){
-    setlocale(LC_ALL, "Portuguese");
-    char sinal[TAM];
-    int acumulador = 0000;
-    int comandos[TAM];
-    int i,j;
-    int verifica;
-    int operar, operando;
-    int resultados[TAM];
-    int A,B,k = 0;
-    int media;
-    int cont;
-    int num[7];
+#define VAL 00
+//Opera��es de entrada/sa�da:
+#define READ 10 //L� uma palavra do terminal para um local espec�fico na mem�ria.
+#define WRITE 11 //Escreve uma palavra de um local espec�fico na mem�ria para o terminal.
+//Opera��es de carregamento/armazenamento:
+#define LOAD 20 //Carrega uma palavra de um local espec�fico na mem�ria para o accumulator.
+#define STORE 21 //Armazena uma palavra do accumulator para um local espec�fico na mem�ria.
+//Opera��es aritm�ticas:
+#define ADD 30 //Soma uma palavra de um local espec�fico na mem�ria � palavra no accumulator (deixa o resultado no accumulator).
+#define SUBTRACT 31 //Subtrai uma palavra de um local espec�fico na mem�ria da palavra no accumulator (deixa o resultado no accumulator).
+#define DIVIDE 32 //Divide uma palavra de um local espec�fico na mem�ria pela palavra no accumulator (deixa o resultado no accumulator).
+#define MULTIPLY 33 //Multiplica uma palavra de um local espec�fico na mem�ria pela palavra no accumulator (deixa o resultado no accumulator).
+//Opera��es de transfer�ncia de controle:
+#define BRANCH 40 //Desvia para um local espec�fico na mem�ria.
+#define BRANCHNEG 41 //Desvia para um local espec�fico na mem�ria se o accumulator for negativo.
+#define BRANCHZERO 42 //Desvia para um local espec�fico na mem�ria se o accumulator for zero.
+#define HALT 43 //Para (halt), ou seinstructionCountera, o programa concluiu sua tarefa.
+int menu_mostrar();
+void sml_menu();
+int validar_operador(int num); 
 
-    for(i=0; i < 100 ;i++){
-        fflush(stdin);
-        scanf("%c%5d", &sinal[i], &comandos[i]);
-        verifica = verificar_comando(sinal[i], comandos[i]);
-        if(verifica == 1){
-            printf("acabaram os comandos\n");
-            break;
+int main(){
+ int num;
+ int instructionCounter;
+ int memory[100];
+ int num_Arquivo=1;
+ int i=0;
+ char sinal[100];
+ int operacao[100];
+ int operationCode;
+ int verificar;
+ while(num!=4){
+    num=menu_mostrar();
+    switch (num)
+    {
+    case 1:
+        for (instructionCounter = 0; instructionCounter < 100; instructionCounter++){
+                memory[instructionCounter] = 0;
         }
-        else if(verifica == 0){
-            operando = comandos[i]%100;
-            operar = comandos[i]/100;
-            printf("entrou aqui\n");
-            switch (operar){
-                case READ:
-                    if (k == 0){
-                        printf("Digite A:\t");
-                        scanf("%d", &A);
-                        resultados[operando] = A;
-                    }else{
-                        printf("Digite B:\t");
-                        scanf("%d", &B);
-                        resultados[operando] = B;
-                    }
-                    k++;
-                    break;
-                case WRITE:
-                    resultados[operando] = acumulador;
-                    break;
-                case LOAD:
-                    acumulador += resultados[operando];
-                    break;
-                case STORE:
-                    resultados[operando] = acumulador;
-                    break;
-                case ADD:
-                    acumulador += resultados[operando];
-                    break;
-                case SUBTRACT:
-                    acumulador -= resultados[operando];
-                    break;
-                case DIVIDE:
-                    acumulador /= resultados[operando];
-                    break;
-                case MULTIPLY:
-                    acumulador *= resultados[operando];
-                    break;
-                case BRANCH:
-                    //Desviar para um local especifico da memoria. Como?
-                    break;
-                case BRANCHNEG:
-                    if (acumulador < 0){
-                        resultados[operando] = acumulador;
-                    }
-                    break;
-                case BRANCHZERO:
-                    if (acumulador == 0){
-                        resultados[operando] = acumulador;
-                    }
-                    break;
-                case MEDIA:
-                    media=0;
-                    printf("digite 7 numero para calcular a média:");
-                    for(cont=0; cont<7; cont++){
-                        scanf("%d", &num[cont]);
-                        media+=num[cont];
-                    }
-                    media=media/7;
-                    printf("media = %d\n", media);
-                    resultados[operando]= media;
-                    break;
-                case HALT:
-                    break;
+        num_Arquivo++;
+        printf("Nome do arquivo criado: PROG%03d.dat\n", num_Arquivo);
+        FILE *arquivo;
+        arquivo = fopen("PROG001.txt", "a");
+            if (arquivo == NULL){
+                printf("ERRO! O arquivo nao foi aberto!\n");
             }
-            if (operar == HALT){
+            else
+            {
+                printf("O arquivo foi aberto com sucesso!\n");
+            }
+            instructionCounter = 0;
+            sml_menu();
+            while (instructionCounter < 100){
+                fflush(stdin);
+                printf("%.2d \? ", instructionCounter);
+                scanf("%c%4d", &sinal[instructionCounter], &memory[instructionCounter]);
+                //fprintf(arquivo, "%s%4d", sinal[instructionCounter], &memory[instructionCounter]);
+                operationCode = memory[instructionCounter] / 100;
+                if (sinal[instructionCounter] == '-' && memory[instructionCounter] == 9999){
+                    break;
+                }else if (sinal[instructionCounter] == '-' && memory[instructionCounter] != 9999){
+                    printf("* Numero invalido, digite novamente *\n");
+                    instructionCounter--;
+                }
+                else{
+                    verificar = validar_operador(operationCode);
+                    if (verificar != 0){
+                        printf("* Operacao invalida, digite novamente *\n");
+                        instructionCounter--;
+                    }
+                    verificar = 0;
+                }
+                instructionCounter++;
+            }
+            i=0;
+            while(i<instructionCounter){
+                printf("%.2d \? ", i);
+                printf("%c%4d\n", sinal[i], memory[i]);
+                fprintf(arquivo, "%.2d \? %c%.4d\n", i, sinal[i], memory[i]);
+                i++;
+
+            }
+            printf("* Carga do programa concluida    *\n");
+            fclose(arquivo);
+            system("pause");
+        break;
+    
+    case 2:
+        break;
+    case 3:
+        break;
+    default:
+        break;
+    }
+ }   
+}
+
+int menu_mostrar(){
+    int escolha;
+    
+    printf("* Para informar um novo codigo, digite 1                *\n");
+    printf("* Para executar/carregar um codigo da memoria, digite 2 *\n");
+    printf("* Para para pesquisar um codigo existente, digite 3     *\n");
+    printf("* Para encerrar o programa, digite 4                    *\n");
+    scanf("%d", &escolha);
+
+    return escolha;
+}
+void sml_menu(){
+
+    printf("* Bem vindo ao Simpletron!                        *\n");
+    printf("* Favor digitar seu programa, uma instrucao       *\n");
+    printf("* (ou palavra de dados) por vez. Mostrarei        *\n");
+    printf("* o numero do local e uma interrogacao (?).       *\n");
+    printf("* Voce, entao, devera digitar a palavra para esse *\n");
+    printf("* local. Digite a sentinela -9999 para            *\n");
+    printf("* encerrar a entrada do seu programa.             *\n");
+}
+int validar_operador(int num){
+    switch (num){
+            case VAL:
+                return 0;
                 break;
-            }
+            case READ:
+                return 0;
+                break;
+                break;
+            case WRITE:
+                return 0;
+                break;
+            case LOAD:
+                return 0;
+                break;
+            case STORE:
+                return 0;
+                break;
+            case ADD:
+                return 0;
+                break;
+            case SUBTRACT:
+                return 0;
+                break;
+            case DIVIDE:
+                return 0;
+                break;
+            case MULTIPLY:
+                return 0;
+                break;
+            case BRANCH:
+                return 0;
+                break;
+            case BRANCHNEG:
+                return 0;
+                break;
+            case BRANCHZERO:
+                return 0;
+                break;
+            case HALT:
+                return 0;
+                break;
+            default:
+            return 1;
+    }
+}
+int operacoes(){
+    int instructionCounter=0;
+    char sinal[100];
+    int memory[100];
+    int operationCode;
+    int verificar;
+    while (instructionCounter < 100){
+        fflush(stdin);
+        printf("%.2d \? ", instructionCounter);
+        scanf("%c%4d", &sinal[instructionCounter], &memory[instructionCounter]);
+        printf("\n operacao: %s%d\n", sinal[instructionCounter], memory[instructionCounter]);
+        printf("instruction: %.2d\n", instructionCounter);
+        //fprintf(arquivo, "%s%4d", sinal[instructionCounter], &memory[instructionCounter]);
+        operationCode = memory[instructionCounter] / 100;
+        if (sinal[instructionCounter] == '-' && memory[instructionCounter] == 9999){
+            break;
+        }else if (sinal[instructionCounter] == '-' && memory[instructionCounter] != 9999){
+            printf("* Numero invalido, digite novamente *\n");
+            instructionCounter--;
         }
         else{
-            printf("não entra\n");
+            verificar = validar_operador(operationCode);
+            if (verificar != 0){
+                printf("* Operacao invalida, digite novamente *\n");
+                instructionCounter--;
+            }
+            verificar = 0;
         }
-    }
-    for (j = 0; j < i; j++){
-        printf("%02d \? %+d\n", j, comandos[j]);
-    }
-    return 0;
-}
-int verificar_comando(char str, int num){
-    if (str == '+'){
-        return 0;
-    }else if (str == '-'){
-        if (num == 99999){
-            return 1;
-        }else{
-            return 2;
-        }
-    }else{
-        return 2;
+        instructionCounter++;
     }
 }
