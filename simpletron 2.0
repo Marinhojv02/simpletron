@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 #include <locale.h>
 
 #define VAL 00
@@ -24,88 +25,154 @@ void sml_menu();
 int validar_operador(int num); 
 
 int main(){
- int num;
- int instructionCounter;
- int memory[100];
- int num_Arquivo=1;
- int i=0;
- char sinal[100];
- int operacao[100];
- int operationCode;
- int verificar;
- while(num!=4){
-    num=menu_mostrar();
-    switch (num)
-    {
-    case 1:
-        for (instructionCounter = 0; instructionCounter < 100; instructionCounter++){
-                memory[instructionCounter] = 0;
-        }
-        num_Arquivo++;
-        printf("Nome do arquivo criado: PROG%03d.dat\n", num_Arquivo);
-        FILE *arquivo;
-        arquivo = fopen("PROG001.txt", "a");
+    //setlocale(LC_ALL, "Portuguese");
+
+    int num;
+    int instructionCounter;
+    int memory[100];
+    int num_Arquivo = 1;
+    int i=0;
+    char sinal[100];
+    int operacao[100];
+    int operationCode;
+    int verificar;
+    char nome[10] = "PROG", arquivo_d[10];
+    char aux[4], tamanho;
+    char c;
+
+    FILE *arquivo;
+
+    while(num!=4){
+        num = menu_mostrar();
+        switch (num)
+        {
+        case 1:
+            for (instructionCounter = 0; instructionCounter < 100; instructionCounter++){
+                    memory[instructionCounter] = 0;
+            }
+            num_Arquivo++;
+            itoa(num_Arquivo, aux, 10);
+            tamanho = strlen(aux);
+            switch (tamanho)
+            {
+            case 1:
+                strcat(nome, "00");
+                strcat(nome, aux);
+                strcat(nome, ".txt");
+                break;
+            case 2:
+                strcat(nome, "0");
+                strcat(nome, aux);
+                strcat(nome, ".txt");
+                break;
+            case 3:
+                strcat(nome, aux);
+                strcat(nome, ".txt");
+                break;
+            }
+            printf("\nNome do arquivo criado: %s\n", nome);
+            arquivo = fopen(nome, "a");
+                if (arquivo == NULL){
+                    printf("ERRO! O arquivo nao foi aberto!\n");
+                }
+                else
+                {
+                    printf("O arquivo foi aberto com sucesso!\n");
+                }
+                instructionCounter = 0;
+                printf("\n");
+                sml_menu();
+                while (instructionCounter < 100){
+                    fflush(stdin);
+                    printf("%.2d \? ", instructionCounter);
+                    scanf("%c%4d", &sinal[instructionCounter], &memory[instructionCounter]);
+                    operationCode = memory[instructionCounter] / 100;
+                    if (sinal[instructionCounter] == '-' && memory[instructionCounter] == 9999){
+                        break;
+                    }else if (sinal[instructionCounter] == '-' && memory[instructionCounter] != 9999){
+                        printf("* Numero invalido, digite novamente *\n");
+                        instructionCounter--;
+                    }
+                    else{
+                        verificar = validar_operador(operationCode);
+                        if (verificar != 0){
+                            printf("* Operacao invalida, digite novamente *\n");
+                            instructionCounter--;
+                        }
+                        verificar = 0;
+                    }
+                    instructionCounter++;
+                }
+                i = 0;
+                while(i < instructionCounter){
+                    printf("%.2d \? ", i);
+                    printf("%c%4d\n", sinal[i], memory[i]);
+                    fprintf(arquivo, "%.2d \? %c%.4d\n", i, sinal[i], memory[i]);
+                    i++;
+
+                }
+                printf("\n* Carga do programa concluida    *\n");
+                rewind( arquivo );
+                fclose(arquivo);
+                system("pause");
+            break;
+        case 2:
+            
+            break;
+        case 3:
+            printf("\nEscolha o arquivo para pesquisa/leitura: ");
+            scanf("%s", arquivo_d);
+            
+            arquivo = fopen(arquivo_d, "r");
             if (arquivo == NULL){
-                printf("ERRO! O arquivo nao foi aberto!\n");
+                    printf("ERRO! O arquivo nao foi encontrado\n");
             }
             else
             {
-                printf("O arquivo foi aberto com sucesso!\n");
-            }
-            instructionCounter = 0;
-            sml_menu();
-            while (instructionCounter < 100){
-                fflush(stdin);
-                printf("%.2d \? ", instructionCounter);
-                scanf("%c%4d", &sinal[instructionCounter], &memory[instructionCounter]);
-                //fprintf(arquivo, "%s%4d", sinal[instructionCounter], &memory[instructionCounter]);
-                operationCode = memory[instructionCounter] / 100;
-                if (sinal[instructionCounter] == '-' && memory[instructionCounter] == 9999){
-                    break;
-                }else if (sinal[instructionCounter] == '-' && memory[instructionCounter] != 9999){
-                    printf("* Numero invalido, digite novamente *\n");
-                    instructionCounter--;
+                printf("O arquivo foi encontrado!\n");
+//FSCANF TA CERTO?
+            
+            c = fgetc(arquivo);
+            while (c != EOF)
+                {
+                    printf ("%c", c);
+                    c = fgetc(arquivo);
                 }
-                else{
-                    verificar = validar_operador(operationCode);
-                    if (verificar != 0){
-                        printf("* Operacao invalida, digite novamente *\n");
-                        instructionCounter--;
-                    }
-                    verificar = 0;
-                }
-                instructionCounter++;
-            }
-            i=0;
-            while(i<instructionCounter){
-                printf("%.2d \? ", i);
-                printf("%c%4d\n", sinal[i], memory[i]);
-                fprintf(arquivo, "%.2d \? %c%.4d\n", i, sinal[i], memory[i]);
-                i++;
+                printf("\n");
+            
+                fclose(arquivo);
+            
+            /*    printf( "%-6s%s\n", "Local", "Numero");
+                fscanf(arquivo, "%.2d%c%.4d\n", i, sinal[i], memory[i]);
+                i = 0;
+                while ( !feof( arquivo ) ) {
+                    printf("%5d ", i);
+                    printf("%c%4d\n", sinal[i], memory[i]);
+                    fprintf(arquivo, "%.2d %c%.4d\n", i, sinal[i], memory[i]);
+                    i++;
 
+                }
+                */
             }
-            printf("* Carga do programa concluida    *\n");
+            rewind( arquivo );
             fclose(arquivo);
             system("pause");
-        break;
-    
-    case 2:
-        break;
-    case 3:
-        break;
-    default:
-        break;
-    }
- }   
+            break;
+        case 4:
+            printf("\n* Fim do programa *\n");
+            break;
+        }
+    }   
+    return 0;
 }
 
 int menu_mostrar(){
     int escolha;
     
-    printf("* Para informar um novo codigo, digite 1                *\n");
-    printf("* Para executar/carregar um codigo da memoria, digite 2 *\n");
-    printf("* Para para pesquisar um codigo existente, digite 3     *\n");
-    printf("* Para encerrar o programa, digite 4                    *\n");
+    printf("* 1 - Digitar um novo codigo                 *\n");
+    printf("* 2 - Executar/carregar um codigo da memoria *\n");
+    printf("* 3 - Pesquisar um codigo existente          *\n");
+    printf("* 4 - Encerrar o programa                    *\n");
     scanf("%d", &escolha);
 
     return escolha;
@@ -164,36 +231,5 @@ int validar_operador(int num){
                 break;
             default:
             return 1;
-    }
-}
-int operacoes(){
-    int instructionCounter=0;
-    char sinal[100];
-    int memory[100];
-    int operationCode;
-    int verificar;
-    while (instructionCounter < 100){
-        fflush(stdin);
-        printf("%.2d \? ", instructionCounter);
-        scanf("%c%4d", &sinal[instructionCounter], &memory[instructionCounter]);
-        printf("\n operacao: %s%d\n", sinal[instructionCounter], memory[instructionCounter]);
-        printf("instruction: %.2d\n", instructionCounter);
-        //fprintf(arquivo, "%s%4d", sinal[instructionCounter], &memory[instructionCounter]);
-        operationCode = memory[instructionCounter] / 100;
-        if (sinal[instructionCounter] == '-' && memory[instructionCounter] == 9999){
-            break;
-        }else if (sinal[instructionCounter] == '-' && memory[instructionCounter] != 9999){
-            printf("* Numero invalido, digite novamente *\n");
-            instructionCounter--;
-        }
-        else{
-            verificar = validar_operador(operationCode);
-            if (verificar != 0){
-                printf("* Operacao invalida, digite novamente *\n");
-                instructionCounter--;
-            }
-            verificar = 0;
-        }
-        instructionCounter++;
     }
 }
