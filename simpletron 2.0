@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <locale.h>
+#include <time.h>
 
 #define VAL 00
 //Opera��es de entrada/sa�da:
@@ -36,13 +37,19 @@ int main(){
     int operacao[100];
     int operationCode;
     int verificar;
-    char nome[10] = "PROG", arquivo_d[10];
+    char arquivo_d[10];
     char aux[4], tamanho;
     char c;
+
+    struct tm *data_hora_atual;     
+    time_t segundos;
+    time(&segundos);   
+    data_hora_atual = localtime(&segundos); 
 
     FILE *arquivo;
 
     while(num!=4){
+        char nome[10] = "PROG";
         num = menu_mostrar();
         switch (num)
         {
@@ -104,6 +111,7 @@ int main(){
                     instructionCounter++;
                 }
                 i = 0;
+                fprintf(arquivo, "%02d:%02d %02d/%02d/%4d\n", data_hora_atual->tm_hour,data_hora_atual->tm_min, data_hora_atual->tm_mday, data_hora_atual->tm_mon+1,data_hora_atual->tm_year+1900);
                 while(i < instructionCounter){
                     printf("%.2d \? ", i);
                     printf("%c%4d\n", sinal[i], memory[i]);
@@ -130,7 +138,6 @@ int main(){
             else
             {
                 printf("O arquivo foi encontrado!\n");
-//FSCANF TA CERTO?
             
             c = fgetc(arquivo);
             while (c != EOF)
